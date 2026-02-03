@@ -44,3 +44,5 @@ def fetch_user_events(username):
         raise RuntimeError(
             f"Network error: {error.reason}"
         ) from error
+
+

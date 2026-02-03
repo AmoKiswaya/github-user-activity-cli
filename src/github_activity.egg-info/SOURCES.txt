@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/__init__.py
+src/cli.py
+src/events_format.py
+src/git_api.py
+src/github_activity.egg-info/PKG-INFO
+src/github_activity.egg-info/SOURCES.txt
+src/github_activity.egg-info/dependency_links.txt
+src/github_activity.egg-info/entry_points.txt
+src/github_activity.egg-info/top_level.txt

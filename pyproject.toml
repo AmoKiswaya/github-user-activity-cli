@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "github-activity-cli"
+version = "0.1.0"
+description = "CLI for GitHub user activity"
+requires-python = ">=3.10"
+
+[project.scripts]
+github-activity = "github_activity_cli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"] 
