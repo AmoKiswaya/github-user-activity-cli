@@ -45,7 +45,7 @@ EVENT_HANDLERS = {
 
 def format_events(events):
     if not events:
-        return "⚠️ No events found!"
+        return ["No recent activity found!"]
     
     user_events = []
 
