@@ -85,5 +85,99 @@ class TestEventHandlers(unittest.TestCase):
         self.assertEqual(result, "testuser performed CreateEvent on owner/repo")
 
 
+class TestFormatEvents(unittest.TestCase):
+    """Test the main format_events function"""
+    
+    def test_format_events_empty_list(self):
+        result = format_events([])
+        
+        self.assertEqual(result, ["No recent activity found!"])
+    
+    def test_format_events_single_push(self):
+        events = [{
+            "type": "PushEvent",
+            "actor": {"login": "alice"},
+            "repo": {"name": "alice/project"},
+            "payload": {"size": 2}
+        }]
+        
+        result = format_events(events)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], "alice pushed 2 commits to alice/project")
+    
+    def test_format_events_multiple_types(self):
+        events = [
+            {
+                "type": "PushEvent",
+                "actor": {"login": "alice"},
+                "repo": {"name": "alice/project"},
+                "payload": {"size": 1}
+            },
+            {
+                "type": "WatchEvent",
+                "actor": {"login": "bob"},
+                "repo": {"name": "alice/project"}
+            },
+            {
+                "type": "IssuesEvent",
+                "actor": {"login": "charlie"},
+                "repo": {"name": "owner/repo"},
+                "payload": {
+                    "action": "closed",
+                    "issue": {"number": 10}
+                }
+            }
+        ]
+        
+        result = format_events(events)
+        
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0], "alice pushed 1 commits to alice/project")
+        self.assertEqual(result[1], "bob starred alice/project")
+        self.assertEqual(result[2], "charlie closed issue #10 in owner/repo")
+    
+    def test_format_events_with_unknown_type(self):
+        events = [{
+            "type": "ForkEvent",  # Not in EVENT_HANDLERS
+            "actor": {"login": "testuser"},
+            "repo": {"name": "owner/repo"}
+        }]
+        
+        result = format_events(events)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], "testuser performed ForkEvent on owner/repo")
+    
+    def test_format_events_preserves_order(self):
+        """Test that events are formatted in the same order"""
+        events = [
+            {
+                "type": "PushEvent",
+                "actor": {"login": "user1"},
+                "repo": {"name": "repo1"},
+                "payload": {"size": 1}
+            },
+            {
+                "type": "PushEvent",
+                "actor": {"login": "user2"},
+                "repo": {"name": "repo2"},
+                "payload": {"size": 2}
+            },
+            {
+                "type": "PushEvent",
+                "actor": {"login": "user3"},
+                "repo": {"name": "repo3"},
+                "payload": {"size": 3}
+            }
+        ]
+        
+        result = format_events(events)
+        
+        self.assertIn("user1", result[0])
+        self.assertIn("user2", result[1])
+        self.assertIn("user3", result[2])
+
+
 if __name__ == "__main__":
     unittest.main() 
